@@ -1,120 +1,159 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
 <title>FF Battle Arena</title>
 <style>
+:root{--red:#ff3038;--deep:#e50914;--bg:#080808;--panel:#191919;--muted:#bdbdbd;--line:#343434}
 *{box-sizing:border-box}
-body{
- margin:0;background:#090909;color:white;
- font-family:Arial,sans-serif;
-}
-header{
- background:#151515;padding:20px;
- border-bottom:2px solid #e50914;
- display:flex;justify-content:space-between;
- align-items:center;
-}
-.logo{font-size:21px;font-weight:bold;color:#ff3030}
-.hero{text-align:center;padding:55px 18px;
- background:linear-gradient(140deg,#250000,#111,#080808)}
-.hero h1{font-size:36px;color:#ff3030}
-.hero p{color:#ccc;line-height:1.6}
-.btn{
- display:inline-block;background:#e50914;color:white;
- padding:13px 22px;border-radius:7px;
- text-decoration:none;font-weight:bold;
- margin:8px;border:0;
-}
-section{padding:25px 18px}
-h2{color:#ff3030}
-.card{
- background:#191919;border:1px solid #333;
- border-radius:12px;padding:18px;margin:15px 0;
-}
-.card h3{margin-top:0}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif}
+header{position:sticky;top:0;z-index:5;background:#151515;padding:16px 5%;border-bottom:2px solid var(--deep);display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:clamp(18px,4vw,26px);font-weight:800;color:var(--red)}
+nav{display:flex;gap:18px;align-items:center}
+nav a{color:#eee;text-decoration:none;font-size:14px}
+.menu{display:none;background:none;border:0;color:white;font-size:25px}
+.hero{text-align:center;padding:76px 18px 82px;background:radial-gradient(ellipse at top left,#390606 0%,#160909 40%,#090909 78%)}
+.hero h1{font-size:clamp(32px,7vw,58px);color:var(--red);margin:15px 0 28px}
+.hero p{color:#ccc;line-height:1.7;font-size:clamp(17px,3vw,23px)}
+.btn{display:inline-block;background:var(--deep);color:white;padding:14px 22px;border-radius:9px;text-decoration:none;font-weight:bold;border:0;cursor:pointer;margin:8px;font-size:16px}
+.btn.secondary{background:#292929;border:1px solid #555}
+.btn:hover{filter:brightness(1.13)}
+section{padding:30px 5%;max-width:1100px;margin:auto}
+h2{color:var(--red);font-size:clamp(25px,5vw,34px)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:22px;margin:16px 0}
+.card h3{margin-top:0;font-size:23px}
+.info{color:var(--muted);line-height:1.8}
 .tag{color:#20df8a;font-weight:bold}
-.info{color:#bbb;line-height:1.8}
-footer{
- text-align:center;padding:25px;
- background:#151515;color:#aaa;
- border-top:1px solid #e50914;
-}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+#player-area{display:none;background:#101010;border-top:1px solid #333}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px}
+.stat{background:#202020;padding:17px;border-radius:12px;border:1px solid #393939}
+.stat strong{display:block;color:var(--red);font-size:24px;margin-top:8px}
+footer{text-align:center;padding:25px;background:#151515;color:#aaa;border-top:1px solid var(--deep)}
+.modal{display:none;position:fixed;inset:0;background:#000c;z-index:10;align-items:center;justify-content:center;padding:18px}
+.modal.show{display:flex}
+.dialog{width:min(100%,440px);background:#171717;border:1px solid #444;border-radius:18px;padding:23px;position:relative}
+.dialog h2{margin-top:0}
+.close{position:absolute;right:15px;top:12px;background:none;border:0;color:#fff;font-size:26px;cursor:pointer}
+.tabs{display:flex;gap:8px;margin:16px 0}
+.tab{flex:1;padding:11px;border:1px solid #444;background:#222;color:#fff;border-radius:8px}
+.tab.active{background:var(--deep);border-color:var(--deep)}
+label{display:block;color:#ddd;margin:13px 0 6px;font-size:14px}
+input{width:100%;padding:13px;border-radius:8px;border:1px solid #555;background:#090909;color:#fff;font-size:16px}
+.note{font-size:13px;color:#aaa;line-height:1.5}
+#form-message{color:#ffd27a;line-height:1.5}
+@media(max-width:650px){nav{display:none;position:absolute;top:62px;right:12px;background:#1b1b1b;padding:15px;border:1px solid #444;border-radius:10px;flex-direction:column;align-items:flex-start}.menu{display:block}nav.open{display:flex}}
 </style>
 </head>
 <body>
-
 <header>
- <div class="logo">🔥 FF BATTLE ARENA</div>
- <div>☰</div>
+  <div class="logo">🔥 FF BATTLE ARENA</div>
+  <button class="menu" aria-label="Open menu" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+  <nav>
+    <a href="#about">About</a><a href="#tournaments">Tournaments</a><a href="#points">Reward Points</a>
+    <button class="btn" style="margin:0;padding:10px 15px" onclick="openAuth('login')">Player Login</button>
+  </nav>
 </header>
 
 <div class="hero">
- <h1>WELCOME FIGHTERS!</h1>
- <p>Enter the Battle. Show Your Skills.<br>
- Play Free Tournaments & Earn Reward Points.</p>
- <a href="#tournaments" class="btn">JOIN TOURNAMENT</a>
+  <h1>WELCOME FIGHTERS!</h1>
+  <p>Enter the Battle. Show Your Skills.<br>Play Free Tournaments &amp; Earn Reward Points.</p>
+  <button class="btn" onclick="openAuth('register')">CREATE PLAYER ACCOUNT</button>
+  <button class="btn secondary" onclick="openAuth('login')">PLAYER LOGIN</button>
 </div>
 
-<section>
- <h2>🏆 About Us</h2>
- <div class="card">
-  <p class="info">
-   Welcome to FF Battle Arena!
-   Participate in exciting free gaming tournaments.
-   Play with your team and collect reward points.
-  </p>
- </div>
+<section id="about">
+  <h2>🏆 About Us</h2>
+  <div class="card"><p class="info">Welcome to FF Battle Arena! Participate in exciting free gaming tournaments. Play with your team and collect non-cash reward points.</p></div>
 </section>
 
 <section id="tournaments">
- <h2>🎮 Upcoming Tournaments</h2>
+  <h2>🎮 Upcoming Tournaments</h2>
+  <div class="card">
+    <h3>🔥 Battle Royale</h3><p class="tag">FREE ENTRY</p>
+    <p class="info">Mode: Squad<br>Entry: Free<br>Reward: Non-cash points</p>
+    <button class="btn" onclick="openAuth('login')">Login to Join</button>
+  </div>
+  <div class="card">
+    <h3>⚡ Clash Squad</h3><p class="tag">FREE ENTRY</p>
+    <p class="info">Mode: Clash Squad<br>Entry: Free<br>Reward: Non-cash points</p>
+    <button class="btn" onclick="openAuth('login')">Login to Join</button>
+  </div>
+</section>
 
- <div class="card">
-  <h3>🔥 Battle Royale</h3>
-  <p class="tag">FREE ENTRY</p>
-  <p class="info">Mode: Squad<br>
-  Entry: Free<br>
-  Reward: Points</p>
-  <a class="btn" href="https://wa.me/9170917258?text=I%20want%20to%20join%20Battle%20Royale">Join Now</a>
- </div>
+<section id="points">
+  <h2>⭐ Reward Points</h2>
+  <div class="card"><h3>Play &amp; Collect Points</h3><p class="info">Participate in tournaments and collect non-cash reward points according to the published tournament rules. Points are not cash and cannot be exchanged for money.</p></div>
+</section>
 
- <div class="card">
-  <h3>⚡ Clash Squad</h3>
-  <p class="tag">FREE ENTRY</p>
-  <p class="info">Mode: Clash Squad<br>
-  Entry: Free<br>
-  Reward: Points</p>
-  <a class="btn" href="https://wa.me/9170917258?text=I%20want%20to%20join%20Clash%20Squad">Join Now</a>
- </div>
+<section id="player-area">
+  <h2>👤 Player Dashboard</h2>
+  <div class="card">
+    <h3>Welcome, <span id="player-name">Fighter</span>!</h3>
+    <div class="stats">
+      <div class="stat">Reward Points<strong>0</strong></div>
+      <div class="stat">Joined Tournaments<strong>0</strong></div>
+      <div class="stat">Matches Played<strong>0</strong></div>
+    </div>
+    <p class="info">This is a preview dashboard. Your real player profile and tournament history will appear after secure account services are connected.</p>
+    <button class="btn secondary" onclick="document.getElementById('player-area').style.display='none'">Close Dashboard</button>
+  </div>
 </section>
 
 <section>
- <h2>⭐ Reward Points</h2>
- <div class="card">
-  <h3>Play & Collect Points</h3>
-  <p class="info">
-   Participate in tournaments and collect
-   non-cash reward points according to the
-   tournament rules.
-  </p>
- </div>
+  <h2>📞 Customer Support</h2>
+  <div class="card"><p class="info">Need help? Contact our support team.</p><a class="btn" href="https://wa.me/9170917258">Contact Us</a></div>
 </section>
+<footer><p>© 2026 FF Battle Arena</p><p>Play Fair. Play Smart. 🔥</p></footer>
 
-<section>
- <h2>📞 Customer Support</h2>
- <div class="card">
-  <p class="info">Need help? Contact our support team.</p>
-  <a class="btn" href="https://wa.me/9170917258">Contact Us</a>
- </div>
-</section>
+<div class="modal" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <div class="dialog">
+    <button class="close" aria-label="Close" onclick="closeAuth()">×</button>
+    <h2 id="auth-title">Player Account</h2>
+    <div class="tabs">
+      <button class="tab active" id="login-tab" onclick="setMode('login')">Login</button>
+      <button class="tab" id="register-tab" onclick="setMode('register')">Register</button>
+    </div>
+    <form id="auth-form">
+      <label for="player-name-input">Player name</label>
+      <input id="player-name-input" autocomplete="nickname" placeholder="Enter your player name" required>
+      <div id="email-wrap" style="display:none">
+        <label for="player-email">Email address</label>
+        <input id="player-email" type="email" autocomplete="email" placeholder="you@example.com">
+      </div>
+      <p class="note">This is a visual preview only. Do not enter a real password or sensitive personal information. Secure login and registration are not connected yet.</p>
+      <button class="btn" type="submit" style="width:100%">Preview Dashboard</button>
+    </form>
+    <p id="form-message" class="note">No account details are sent or saved by this demo.</p>
+  </div>
+</div>
 
-<footer>
- <p>© 2026 FF Battle Arena</p>
- <p>Play Fair. Play Smart. 🔥</p>
-</footer>
-
+<script>
+let authMode='login';
+function openAuth(mode){setMode(mode);document.getElementById('auth-modal').classList.add('show')}
+function closeAuth(){document.getElementById('auth-modal').classList.remove('show')}
+function setMode(mode){
+  authMode=mode;
+  document.getElementById('login-tab').classList.toggle('active',mode==='login');
+  document.getElementById('register-tab').classList.toggle('active',mode==='register');
+  document.getElementById('email-wrap').style.display=mode==='register'?'block':'none';
+  document.getElementById('player-email').required=mode==='register';
+  document.getElementById('auth-title').textContent=mode==='register'?'Create Player Account':'Player Login';
+  document.getElementById('form-message').textContent='Preview only — no account details are sent or saved.';
+}
+document.getElementById('auth-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const name=document.getElementById('player-name-input').value.trim();
+  if(!name)return;
+  document.getElementById('player-name').textContent=name;
+  closeAuth();
+  document.getElementById('player-area').style.display='block';
+  document.getElementById('player-area').scrollIntoView({behavior:'smooth'});
+});
+document.getElementById('auth-modal').addEventListener('click',function(e){if(e.target===this)closeAuth()});
+</script>
 </body>
 </html>
